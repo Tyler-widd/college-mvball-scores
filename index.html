@@ -1,0 +1,1076 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap"
+      rel="stylesheet"
+    />
+    <title>College Men's Volleyball Scores</title>
+    <style>
+      :root {
+        --bg-primary: #0d1117;
+        --bg-secondary: #161b22;
+        --bg-tertiary: #21262d;
+        --border-color: #30363d;
+        --text-primary: #c9d1d9;
+        --text-secondary: #8b949e;
+        --text-muted: #6e7681;
+        --accent-green: #3fb950;
+        --accent-green-bg: #238636;
+        --accent-gray: #484f58;
+        --accent-blue: #58a6ff;
+        --accent-orange: #d29922;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Google Sans Code", monospace;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 16px;
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .filters {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .filter-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .filter-select {
+        background-color: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        color: var(--text-primary);
+        font-size: 0.8125rem;
+        padding: 4px 8px;
+        cursor: pointer;
+        min-width: 120px;
+      }
+
+      .filter-select:hover {
+        border-color: var(--text-muted);
+      }
+
+      .filter-select:focus {
+        outline: none;
+        border-color: var(--accent-green);
+      }
+
+      .filter-select option {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+      }
+
+      .section-header {
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-secondary);
+        margin: 24px 0 12px 0;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .section-header:first-child {
+        margin-top: 0;
+      }
+
+      .match-card {
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 12px;
+        overflow: hidden;
+      }
+
+      .match-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        background-color: var(--bg-tertiary);
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .status-badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .status-live {
+        background-color: var(--accent-green-bg);
+        color: #fff;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
+      .status-final {
+        background-color: var(--accent-gray);
+        color: var(--text-primary);
+      }
+
+      .status-upcoming {
+        background-color: var(--bg-secondary);
+        color: var(--accent-blue);
+        border: 1px solid var(--accent-blue);
+      }
+
+      .match-info {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      .match-content {
+        padding: 12px;
+      }
+
+      .team-row {
+        display: flex;
+        align-items: center;
+        padding: 8px 0;
+      }
+
+      .team-row:first-child {
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .team-row.winner .team-name {
+        color: var(--accent-green);
+      }
+
+      .team-logo {
+        width: 32px;
+        height: 32px;
+        margin-right: 12px;
+        flex-shrink: 0;
+        object-fit: contain;
+      }
+
+      .team-logo-placeholder {
+        width: 32px;
+        height: 32px;
+        margin-right: 12px;
+        flex-shrink: 0;
+        background-color: var(--bg-tertiary);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.625rem;
+        color: var(--text-muted);
+      }
+
+      .team-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .team-name {
+        font-weight: 600;
+        font-size: 0.9375rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .team-meta {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+
+      .team-meta .conference {
+        color: var(--text-secondary);
+      }
+
+      .team-meta .division {
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+
+      .team-meta .record {
+        color: var(--text-secondary);
+      }
+
+      .scores {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .set-score {
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        background-color: var(--bg-tertiary);
+        border-radius: 4px;
+        color: var(--text-secondary);
+      }
+
+      .set-score.winner {
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .total-score {
+        width: 36px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        font-weight: 700;
+        background-color: var(--bg-tertiary);
+        border-radius: 4px;
+        margin-left: 8px;
+        color: var(--text-primary);
+      }
+
+      .total-score.winner {
+        background-color: var(--accent-green-bg);
+        color: #fff;
+      }
+
+      .no-matches {
+        text-align: center;
+        padding: 48px 24px;
+        color: var(--text-secondary);
+        font-size: 1rem;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 48px 24px;
+        color: var(--text-secondary);
+      }
+
+      .loading-spinner {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border: 2px solid var(--border-color);
+        border-top-color: var(--accent-green);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 12px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .current-period {
+        font-size: 0.75rem;
+        color: var(--accent-orange);
+        margin-left: 8px;
+      }
+
+      /* Debug info - hidden by default */
+      .debug-info {
+        display: none;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        padding: 8px;
+        margin-top: 24px;
+        border: 1px dashed var(--border-color);
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>College Men's Volleyball Scores</h1>
+      <div id="app">
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <div>Loading matches...</div>
+        </div>
+      </div>
+      <div class="debug-info" id="debug"></div>
+    </div>
+
+    <script>
+      // ============================================================
+      // CONSTANTS
+      // ============================================================
+      const PROXY_BASE =
+        "https://ncaa-proxy.tylerperrywiddison.workers.dev/api/?url=";
+      const API_BASE = "https://ncaa-api.henrygd.me";
+      const LOGO_BASE = "https://ncaa-api.henrygd.me/logo/";
+
+      const DIVISIONS = ["d1", "d3"];
+      const POLL_INTERVAL_MS = 30000; // 30 seconds
+      const MIN_REQUEST_GAP_MS = 200; // 5 requests per second max
+      const SCHEDULE_REFRESH_HOUR = 4; // 4 AM PST
+
+      // ============================================================
+      // STATE
+      // ============================================================
+      let schedule = [];
+      let matchData = {}; // matchId -> { linescores, teams, etc }
+      let pollingIntervals = {}; // matchId -> intervalId
+      let scheduledTimers = {}; // matchId -> timeoutId
+      let lastRequestTime = 0;
+      let isLoading = true;
+
+      // Filter state
+      let selectedDivision = "";
+      let selectedConference = "";
+
+      // ============================================================
+      // UTILITY FUNCTIONS
+      // ============================================================
+
+      function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      function getTodayDateString() {
+        // Get current date in PST
+        const now = new Date();
+        const pstOffset = -8 * 60; // PST is UTC-8
+        const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+        const pstTime = new Date(utc + pstOffset * 60000);
+
+        const year = pstTime.getFullYear();
+        const month = String(pstTime.getMonth() + 1).padStart(2, "0");
+        const day = String(pstTime.getDate()).padStart(2, "0");
+
+        return `${year}/${month}/${day}`;
+      }
+
+      function getCurrentTimestamp() {
+        return Math.floor(Date.now() / 1000);
+      }
+
+      function getMatchStatus(match) {
+        const now = getCurrentTimestamp();
+        const startTime = parseInt(match.startTimeEpoch, 10);
+
+        if (match.gameState === "final" || match.finalMessage === "FINAL") {
+          return "final";
+        } else if (startTime > now) {
+          return "upcoming";
+        } else {
+          return "live";
+        }
+      }
+
+      function sortMatches(matches) {
+        const statusOrder = { live: 0, upcoming: 1, final: 2 };
+
+        return [...matches].sort((a, b) => {
+          const statusA = getMatchStatus(a);
+          const statusB = getMatchStatus(b);
+
+          if (statusOrder[statusA] !== statusOrder[statusB]) {
+            return statusOrder[statusA] - statusOrder[statusB];
+          }
+
+          // Within same status, sort by start time
+          return (
+            parseInt(a.startTimeEpoch, 10) - parseInt(b.startTimeEpoch, 10)
+          );
+        });
+      }
+
+      // ============================================================
+      // FILTER FUNCTIONS
+      // ============================================================
+
+      function getUniqueDivisions() {
+        const divisions = new Set();
+        for (const match of schedule) {
+          // Get divisions from match data if available, otherwise from schedule
+          const matchDetails = matchData[match.matchId];
+          const homeDivision = matchDetails?.home?.division || match.division;
+          const awayDivision = matchDetails?.away?.division || match.division;
+
+          if (homeDivision) divisions.add(homeDivision.toUpperCase());
+          if (awayDivision) divisions.add(awayDivision.toUpperCase());
+        }
+        return Array.from(divisions).sort();
+      }
+
+      function getUniqueConferences() {
+        const conferences = new Set();
+
+        for (const match of schedule) {
+          const matchDetails = matchData[match.matchId];
+          const homeDivision = (
+            matchDetails?.home?.division ||
+            match.division ||
+            ""
+          ).toUpperCase();
+          const awayDivision = (
+            matchDetails?.away?.division ||
+            match.division ||
+            ""
+          ).toUpperCase();
+
+          // If a division is selected, only include conferences from teams in that division
+          if (selectedDivision) {
+            if (homeDivision === selectedDivision && match.home.conference) {
+              conferences.add(match.home.conference);
+            }
+            if (awayDivision === selectedDivision && match.away.conference) {
+              conferences.add(match.away.conference);
+            }
+          } else {
+            // No division filter, include all conferences
+            if (match.home.conference) conferences.add(match.home.conference);
+            if (match.away.conference) conferences.add(match.away.conference);
+          }
+        }
+
+        return Array.from(conferences).sort();
+      }
+
+      function applyFilters() {
+        const divisionSelect = document.getElementById("filter-division");
+        const conferenceSelect = document.getElementById("filter-conference");
+
+        const newDivision = divisionSelect ? divisionSelect.value : "";
+        const newConference = conferenceSelect ? conferenceSelect.value : "";
+
+        // If division changed, check if current conference is still valid
+        if (newDivision !== selectedDivision) {
+          selectedDivision = newDivision;
+
+          // Get valid conferences for the new division
+          const validConferences = getUniqueConferences();
+
+          // Reset conference if it's no longer valid
+          if (
+            selectedConference &&
+            !validConferences.includes(selectedConference)
+          ) {
+            selectedConference = "";
+          }
+        } else {
+          selectedConference = newConference;
+        }
+
+        renderMatches();
+      }
+
+      function matchPassesFilter(match) {
+        const matchDetails = matchData[match.matchId];
+
+        // Check division filter
+        if (selectedDivision) {
+          const homeDivision = (
+            matchDetails?.home?.division ||
+            match.division ||
+            ""
+          ).toUpperCase();
+          const awayDivision = (
+            matchDetails?.away?.division ||
+            match.division ||
+            ""
+          ).toUpperCase();
+
+          // Match passes if either team is in the selected division
+          if (
+            homeDivision !== selectedDivision &&
+            awayDivision !== selectedDivision
+          ) {
+            return false;
+          }
+        }
+
+        // Check conference filter
+        if (selectedConference) {
+          const homeConference = match.home.conference || "";
+          const awayConference = match.away.conference || "";
+
+          // Match passes if either team is in the selected conference
+          if (
+            homeConference !== selectedConference &&
+            awayConference !== selectedConference
+          ) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      function getFilteredMatches() {
+        return schedule.filter(matchPassesFilter);
+      }
+
+      // ============================================================
+      // API FUNCTIONS
+      // ============================================================
+
+      async function rateLimitedFetch(url) {
+        const now = Date.now();
+        const timeSinceLastRequest = now - lastRequestTime;
+
+        if (timeSinceLastRequest < MIN_REQUEST_GAP_MS) {
+          await sleep(MIN_REQUEST_GAP_MS - timeSinceLastRequest);
+        }
+
+        lastRequestTime = Date.now();
+
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          return await response.json();
+        } catch (error) {
+          console.error("Fetch error:", error);
+          return null;
+        }
+      }
+
+      async function fetchTodaysSchedule() {
+        const dateStr = getTodayDateString();
+        const gamesMap = new Map(); // Use Map to deduplicate by matchId
+
+        for (const division of DIVISIONS) {
+          const url = `${PROXY_BASE}${encodeURIComponent(`${API_BASE}/scoreboard/volleyball-men/${division}/${dateStr}/all-conf`)}`;
+          const data = await rateLimitedFetch(url);
+
+          if (data && data.games) {
+            for (const item of data.games) {
+              const game = item.game;
+              const matchId = game.url.split("/").pop();
+
+              // Skip if we already have this match
+              if (gamesMap.has(matchId)) {
+                continue;
+              }
+
+              gamesMap.set(matchId, {
+                matchId: matchId,
+                division: division,
+                gameState: game.gameState,
+                finalMessage: game.finalMessage,
+                currentPeriod: game.currentPeriod,
+                startTime: game.startTime,
+                startTimeEpoch: game.startTimeEpoch,
+                startDate: game.startDate,
+                home: {
+                  name: game.home.names.full,
+                  shortName: game.home.names.short,
+                  seoName: game.home.names.seo,
+                  score: parseInt(game.home.score, 10) || 0,
+                  record: game.home.description,
+                  conference:
+                    game.home.conferences?.[0]?.conferenceName || null,
+                  isWinner: game.home.winner,
+                },
+                away: {
+                  name: game.away.names.full,
+                  shortName: game.away.names.short,
+                  seoName: game.away.names.seo,
+                  score: parseInt(game.away.score, 10) || 0,
+                  record: game.away.description,
+                  conference:
+                    game.away.conferences?.[0]?.conferenceName || null,
+                  isWinner: game.away.winner,
+                },
+              });
+            }
+          }
+        }
+
+        schedule = Array.from(gamesMap.values());
+        return schedule;
+      }
+
+      async function fetchMatchScores(matchId) {
+        const url = `${PROXY_BASE}${encodeURIComponent(`${API_BASE}/game/${matchId}`)}`;
+        const data = await rateLimitedFetch(url);
+
+        if (!data || !data.contests || !data.contests[0]) {
+          return null;
+        }
+
+        const contest = data.contests[0];
+        const teams = contest.teams || [];
+        const homeTeam = teams.find((t) => t.isHome) || teams[0];
+        const awayTeam = teams.find((t) => !t.isHome) || teams[1];
+
+        const linescores = (contest.linescores || []).map((ls) => ({
+          period: ls.period,
+          home: parseInt(ls.home, 10) || 0,
+          away: parseInt(ls.visit, 10) || 0,
+        }));
+
+        const result = {
+          matchId,
+          finalMessage: contest.finalMessage,
+          currentPeriod: contest.currentPeriod,
+          gameState: contest.gameState,
+          linescores,
+          home: homeTeam
+            ? {
+                name: homeTeam.nameFull,
+                seoName: homeTeam.seoname,
+                score: homeTeam.score,
+                record: homeTeam.record,
+                division: homeTeam.divisionName,
+                isWinner: homeTeam.isWinner,
+              }
+            : null,
+          away: awayTeam
+            ? {
+                name: awayTeam.nameFull,
+                seoName: awayTeam.seoname,
+                score: awayTeam.score,
+                record: awayTeam.record,
+                division: awayTeam.divisionName,
+                isWinner: awayTeam.isWinner,
+              }
+            : null,
+        };
+
+        matchData[matchId] = result;
+        return result;
+      }
+
+      // ============================================================
+      // RENDERING
+      // ============================================================
+
+      function renderTeamRow(team, linescores, isHome, isMatchFinal) {
+        const logoUrl = `${LOGO_BASE}${team.seoName}.svg?dark=true`;
+        const scores = linescores || [];
+
+        // Build meta info
+        const metaParts = [];
+        if (team.conference) {
+          metaParts.push(`<span class="conference">${team.conference}</span>`);
+        }
+        metaParts.push(`<span class="division">${team.division || ""}</span>`);
+        if (team.record) {
+          metaParts.push(`<span class="record">${team.record}</span>`);
+        }
+
+        // Build set scores
+        let scoresHtml = "";
+        for (const ls of scores) {
+          const teamScore = isHome ? ls.home : ls.away;
+          const opponentScore = isHome ? ls.away : ls.home;
+          const isSetWinner = teamScore > opponentScore;
+          scoresHtml += `<div class="set-score${isSetWinner ? " winner" : ""}">${teamScore}</div>`;
+        }
+
+        // Total score
+        const totalScore = team.score || 0;
+        const isTotalWinner = team.isWinner;
+
+        return `
+        <div class="team-row${isTotalWinner ? " winner" : ""}">
+          <img class="team-logo" src="${logoUrl}" alt="${team.name}" onerror="this.style.display='none'">
+          <div class="team-info">
+            <div class="team-name">${team.name}</div>
+            <div class="team-meta">${metaParts.join(" · ")}</div>
+          </div>
+          <div class="scores">
+            ${scoresHtml}
+            <div class="total-score${isTotalWinner ? " winner" : ""}">${totalScore}</div>
+          </div>
+        </div>
+      `;
+      }
+
+      function renderMatchCard(match) {
+        const status = getMatchStatus(match);
+        const matchDetails = matchData[match.matchId];
+        const linescores = matchDetails?.linescores || [];
+        const isMatchFinal = status === "final";
+
+        // Status badge
+        let statusBadge = "";
+        let currentPeriodInfo = "";
+        if (status === "live") {
+          statusBadge = '<span class="status-badge status-live">Live</span>';
+          if (
+            matchDetails?.currentPeriod &&
+            matchDetails.currentPeriod !== "FINAL"
+          ) {
+            currentPeriodInfo = `<span class="current-period">Set ${matchDetails.currentPeriod}</span>`;
+          }
+        } else if (status === "final") {
+          statusBadge = '<span class="status-badge status-final">Final</span>';
+        } else {
+          statusBadge = `<span class="status-badge status-upcoming">${match.startTime}</span>`;
+        }
+
+        // Build team data for rendering
+        const homeTeam = {
+          name: matchDetails?.home?.name || match.home.name,
+          seoName: matchDetails?.home?.seoName || match.home.seoName,
+          score: matchDetails?.home?.score ?? match.home.score,
+          record: matchDetails?.home?.record || match.home.record,
+          division: matchDetails?.home?.division || match.division,
+          conference: match.home.conference,
+          isWinner: matchDetails?.home?.isWinner ?? match.home.isWinner,
+        };
+
+        const awayTeam = {
+          name: matchDetails?.away?.name || match.away.name,
+          seoName: matchDetails?.away?.seoName || match.away.seoName,
+          score: matchDetails?.away?.score ?? match.away.score,
+          record: matchDetails?.away?.record || match.away.record,
+          division: matchDetails?.away?.division || match.division,
+          conference: match.away.conference,
+          isWinner: matchDetails?.away?.isWinner ?? match.away.isWinner,
+        };
+
+        return `
+        <div class="match-card" data-match-id="${match.matchId}">
+          <div class="match-header">
+            <div>
+              ${statusBadge}
+              ${currentPeriodInfo}
+            </div>
+            <div class="match-info">${match.startDate || ""}</div>
+          </div>
+          <div class="match-content">
+            ${renderTeamRow(homeTeam, linescores, true, isMatchFinal)}
+            ${renderTeamRow(awayTeam, linescores, false, isMatchFinal)}
+          </div>
+        </div>
+      `;
+      }
+
+      function renderFilters() {
+        const divisions = getUniqueDivisions();
+        const conferences = getUniqueConferences();
+
+        let divisionOptions = '<option value="">All</option>';
+        for (const div of divisions) {
+          const selected = selectedDivision === div ? " selected" : "";
+          divisionOptions += `<option value="${div}"${selected}>${div}</option>`;
+        }
+
+        let conferenceOptions = '<option value="">All</option>';
+        for (const conf of conferences) {
+          const selected = selectedConference === conf ? " selected" : "";
+          conferenceOptions += `<option value="${conf}"${selected}>${conf}</option>`;
+        }
+
+        return `
+        <div class="filters">
+          <div class="filter-group">
+            <span class="filter-label">Division</span>
+            <select id="filter-division" class="filter-select" onchange="applyFilters()">
+              ${divisionOptions}
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Conference</span>
+            <select id="filter-conference" class="filter-select" onchange="applyFilters()">
+              ${conferenceOptions}
+            </select>
+          </div>
+        </div>
+      `;
+      }
+
+      function renderMatches() {
+        const app = document.getElementById("app");
+
+        if (isLoading) {
+          return; // Don't render while loading
+        }
+
+        if (schedule.length === 0) {
+          app.innerHTML =
+            '<div class="no-matches">No matches scheduled for today</div>';
+          return;
+        }
+
+        // Apply filters
+        const filteredMatches = getFilteredMatches();
+
+        // Start with filters
+        let html = renderFilters();
+
+        if (filteredMatches.length === 0) {
+          html +=
+            '<div class="no-matches">No matches found for selected filters</div>';
+          app.innerHTML = html;
+          return;
+        }
+
+        const sortedMatches = sortMatches(filteredMatches);
+
+        // Group by status
+        const liveMatches = sortedMatches.filter(
+          (m) => getMatchStatus(m) === "live"
+        );
+        const upcomingMatches = sortedMatches.filter(
+          (m) => getMatchStatus(m) === "upcoming"
+        );
+        const finalMatches = sortedMatches.filter(
+          (m) => getMatchStatus(m) === "final"
+        );
+
+        if (liveMatches.length > 0) {
+          html += '<div class="section-header">Live</div>';
+          html += liveMatches.map(renderMatchCard).join("");
+        }
+
+        if (upcomingMatches.length > 0) {
+          html += '<div class="section-header">Upcoming</div>';
+          html += upcomingMatches.map(renderMatchCard).join("");
+        }
+
+        // Final matches - no header, just render the cards
+        if (finalMatches.length > 0) {
+          html += finalMatches.map(renderMatchCard).join("");
+        }
+
+        app.innerHTML = html;
+      }
+
+      // ============================================================
+      // POLLING LOGIC
+      // ============================================================
+
+      function startMatchPolling(matchId) {
+        // Don't start if already polling
+        if (pollingIntervals[matchId]) {
+          return;
+        }
+
+        // Fetch immediately
+        fetchMatchScores(matchId).then(() => {
+          renderMatches();
+
+          // Check if already final
+          const data = matchData[matchId];
+          if (
+            data &&
+            (data.finalMessage === "FINAL" || data.gameState === "F")
+          ) {
+            updateScheduleWithFinal(matchId);
+            return;
+          }
+
+          // Start interval
+          pollingIntervals[matchId] = setInterval(async () => {
+            await fetchMatchScores(matchId);
+            renderMatches();
+
+            // Check if final
+            const data = matchData[matchId];
+            if (
+              data &&
+              (data.finalMessage === "FINAL" || data.gameState === "F")
+            ) {
+              stopMatchPolling(matchId);
+              updateScheduleWithFinal(matchId);
+            }
+          }, POLL_INTERVAL_MS);
+        });
+      }
+
+      function stopMatchPolling(matchId) {
+        if (pollingIntervals[matchId]) {
+          clearInterval(pollingIntervals[matchId]);
+          delete pollingIntervals[matchId];
+        }
+      }
+
+      function updateScheduleWithFinal(matchId) {
+        // Update the schedule entry to mark as final
+        const matchIndex = schedule.findIndex((m) => m.matchId === matchId);
+        if (matchIndex !== -1) {
+          schedule[matchIndex].gameState = "final";
+          schedule[matchIndex].finalMessage = "FINAL";
+          renderMatches();
+        }
+      }
+
+      function scheduleMatchTimers() {
+        const now = getCurrentTimestamp();
+
+        for (const match of schedule) {
+          const matchId = match.matchId;
+          const startTime = parseInt(match.startTimeEpoch, 10);
+          const status = getMatchStatus(match);
+
+          // Clear any existing timer
+          if (scheduledTimers[matchId]) {
+            clearTimeout(scheduledTimers[matchId]);
+            delete scheduledTimers[matchId];
+          }
+
+          if (status === "final") {
+            // Already final, fetch scores once to get linescores
+            fetchMatchScores(matchId).then(() => renderMatches());
+          } else if (status === "live") {
+            // Already started, begin polling immediately
+            startMatchPolling(matchId);
+          } else if (status === "upcoming") {
+            // Schedule to start polling when match begins
+            const msUntilStart = (startTime - now) * 1000;
+            if (msUntilStart > 0) {
+              scheduledTimers[matchId] = setTimeout(() => {
+                startMatchPolling(matchId);
+              }, msUntilStart);
+            }
+          }
+        }
+      }
+
+      // ============================================================
+      // DAILY REFRESH
+      // ============================================================
+
+      function schedule4AMRefresh() {
+        // Calculate time until next 4 AM PST
+        const now = new Date();
+        const pstOffset = -8 * 60; // PST is UTC-8
+        const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+        const pstTime = new Date(utc + pstOffset * 60000);
+
+        // Calculate next 4 AM PST
+        let next4AM = new Date(pstTime);
+        next4AM.setHours(SCHEDULE_REFRESH_HOUR, 0, 0, 0);
+
+        // If we're past 4 AM today, schedule for tomorrow
+        if (pstTime >= next4AM) {
+          next4AM.setDate(next4AM.getDate() + 1);
+        }
+
+        // Convert back to local time for setTimeout
+        const msUntil4AM = next4AM.getTime() - pstTime.getTime();
+
+        setTimeout(async () => {
+          await refreshSchedule();
+          schedule4AMRefresh(); // Schedule next refresh
+        }, msUntil4AM);
+      }
+
+      async function refreshSchedule() {
+        // Stop all polling
+        for (const matchId of Object.keys(pollingIntervals)) {
+          stopMatchPolling(matchId);
+        }
+
+        // Clear all scheduled timers
+        for (const matchId of Object.keys(scheduledTimers)) {
+          clearTimeout(scheduledTimers[matchId]);
+        }
+        scheduledTimers = {};
+
+        // Clear state
+        schedule = [];
+        matchData = {};
+
+        // Reset filters
+        selectedDivision = "";
+        selectedConference = "";
+
+        // Show loading
+        isLoading = true;
+        document.getElementById("app").innerHTML = `
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <div>Loading matches...</div>
+        </div>
+      `;
+
+        // Fetch new schedule
+        await fetchTodaysSchedule();
+        isLoading = false;
+
+        // Reset filter selections
+        selectedDivision = "";
+        selectedConference = "";
+
+        renderMatches();
+
+        // Schedule timers for new matches
+        scheduleMatchTimers();
+      }
+
+      // ============================================================
+      // INITIALIZATION
+      // ============================================================
+
+      async function init() {
+        // Fetch initial schedule
+        await fetchTodaysSchedule();
+        isLoading = false;
+
+        renderMatches();
+
+        // Schedule match timers
+        scheduleMatchTimers();
+
+        // Schedule daily refresh at 4 AM PST
+        schedule4AMRefresh();
+      }
+
+      // Start the app
+      init();
+    </script>
+  </body>
+</html>
